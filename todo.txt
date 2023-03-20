@@ -1,0 +1,3 @@
+npm init , npm i mongoose , npm install express , 
+npm i router
+npm i validator
