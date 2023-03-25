@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Dispatches = require("../models/Dispatches");
+const middleware = require("../middleware/middleware");
 
 // {Create Operation}
-router.post("/create", async (req, res) => {
+router.post("/create", middleware, async (req, res) => {
   let success = false;
   try {
     //store data
     const {
       cname,
+      idcard,
       cmobile,
       caddress,
       guarantee,
@@ -18,7 +20,9 @@ router.post("/create", async (req, res) => {
       price,
     } = req.body; // de-Structure
     let dispatches = await Dispatches.create({
+      user: req.user.id,
       cname: cname,
+      idcard: idcard,
       cmobile: cmobile,
       caddress: caddress,
       guarantee: guarantee,
@@ -94,22 +98,24 @@ router.put("/update", async (req, res) => {
 });
 
 // {Read/Fetch Operation} Read All
-router.get("/readall", async (req, res) => {
-  const dispatches = await Dispatches.find({}).sort({date:-1}); // fetch all Dispatch Entries
+router.get("/readall", middleware, async (req, res) => {
+  const dispatches = await Dispatches.find({user: req.user.id}).sort({date:-1}); // fetch all Dispatch Entries
   res.json(dispatches);
 });
 
 // {Read/Fetch Operation} Read Searched customers
-router.post("/readcustomer", async (req, res) => {
+router.post("/readcustomer", middleware, async (req, res) => {
   const dispatches = await Dispatches.find({
+    user: req.user.id,
     cname: new RegExp(req.body.keyword, "i"),
   }) // fetch all Dispatches where keyword like this
   res.json(dispatches);
 });
 
 // {Read/Fetch Operation} Read General Search
-router.post("/general", async (req, res) => {
+router.post("/general", middleware, async (req, res) => {
   const dispatches = await Dispatches.find({
+    user: req.user.id,
     $or: [
       { cname: new RegExp(req.body.keyword, "i") },
       { cmobile: new RegExp(req.body.keyword, "i") },

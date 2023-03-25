@@ -11,6 +11,8 @@ app.use(cors());
 app.use('/dispatches', require('./routes/dispatches.js'));
 app.use('/expenses', require('./routes/expenses.js'));
 app.use('/vehicles', require('./routes/vehicles.js'));
+app.use('/auth', require('./routes/auth.js'));
+app.use('/version', require('./routes/version.js'));
 
 app.listen(5000, ()=>{
     console.log('listening at port 5000');

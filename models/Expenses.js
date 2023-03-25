@@ -4,10 +4,10 @@ const { Schema } = mongoose;
 
 const ExpensesSchema = new Schema({
     //Primary key --> Foriegn Key Definition
-    // user:{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'model name'
-    // },
+    user:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     //All required fields here
     detail:{
         type: String

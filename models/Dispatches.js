@@ -4,12 +4,15 @@ const { Schema } = mongoose;
 
 const DispatchesSchema = new Schema({
     //Primary key --> Foriegn Key Definition
-    // user:{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'model name'
-    // },
+    user:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+    },
     //All required fields here
     cname:{
+        type: String
+    },
+    idcard:{
         type: String
     },
     cmobile:{

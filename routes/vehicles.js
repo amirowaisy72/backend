@@ -1,19 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const Vehicles = require("../models/Vehicles");
+const middleware = require("../middleware/middleware");
 
 // {Create Operation}
-router.post("/create", async (req, res) => {
+router.post("/create", middleware, async (req, res) => {
   let success = false;
   try {
     //store data
     const { vname, vnumber, routeStatus, mChange } = req.body; // de-Structure
     //Check if this vehicle is already registered
-    let already = await Vehicles.find({ vnumber: vnumber });
+    let already = await Vehicles.find({ user: req.user.id, vnumber: vnumber });
     if (already.length > 0) {
       res.send({ success, message: "This vehicle is already registered" });
     } else {
       let vehicles = await Vehicles.create({
+        user: req.user.id,
         vname: vname,
         vnumber: vnumber,
         routeStatus: routeStatus,
@@ -42,12 +44,12 @@ router.put("/update", async (req, res) => {
     }
 
     //Find the document to be updated and update it
-    let vehicles = await Vehicles.find({vnumber:vnumber});
+    let vehicles = await Vehicles.find({ vnumber: vnumber });
     if (!vehicles) {
       res.status(404).send("Document not found");
     } else {
       vehicles = await Vehicles.findOneAndUpdate(
-        {vnumber:vnumber},
+        { vnumber: vnumber },
         { $set: newData },
         { new: true }
       );
@@ -63,14 +65,21 @@ router.put("/update", async (req, res) => {
 });
 
 // {Read/Fetch Operation}
-router.get("/readall", async (req, res) => {
-  const vehicles = await Vehicles.find({}); // fetch all Vehicle Entries
+router.get("/readall", middleware, async (req, res) => {
+  const vehicles = await Vehicles.find({ user: req.user.id }); // fetch all Vehicle Entries
   res.json(vehicles);
 });
 
+// {Read/Fetch Operation} Get vehicles of specific shop
+router.get("/readVehiclesOfShop/:id", async (req, res) => {
+  const vehicles = await Vehicles.find({ user: req.params.id }); // fetch all Vehicle Entries
+  res.json(vehicles.length);
+});
+
 // {Read/Fetch Operation}
-router.post("/readvehicles", async (req, res) => {
+router.post("/readvehicles", middleware, async (req, res) => {
   const vehicles = await Vehicles.find({
+    user: req.user.id,
     vnumber: new RegExp(req.body.keyword, "i"),
   }); // fetch all Vehicles where keyword like this
   res.json(vehicles);

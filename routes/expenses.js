@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Expenses = require("../models/Expenses");
+const middleware = require("../middleware/middleware");
 
 // {Create Operation} Add route/end point description here
-router.post("/create", async (req, res) => {
+router.post("/create", middleware, async (req, res) => {
   let success = false;
   try {
     //store data
     const { detail, price } = req.body; // de-Structure
     let expenses = await Expenses.create({
+      user: req.user.id,
       detail: detail,
       price: price,
     });
@@ -55,8 +57,8 @@ router.put("/update", async (req, res) => {
 });
 
 // {Read/Fetch Operation} Add route/end point description here
-router.get("/readall", async (req, res) => {
-  const expenses = await Expenses.find({}); // fetch all Expense Entries
+router.get("/readall", middleware, async (req, res) => {
+  const expenses = await Expenses.find({user: req.user.id}); // fetch all Expense Entries
   res.json(expenses);
 });
 
