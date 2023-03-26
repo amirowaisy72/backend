@@ -3,7 +3,7 @@ const router = express.Router();
 
 // {Read/Fetch Operation}
 router.get("/", async (req, res) => {
-    const version = 2
+    const version = 1
     res.json(version);
   });
 
